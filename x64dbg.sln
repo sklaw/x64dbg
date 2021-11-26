@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31025.194
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "x64dbg_exe", "src\exe\x64dbg_exe.vcxproj", "{3A22175E-6B72-FDCC-1603-C4A2163C7900}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -21,6 +21,11 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zydis_wrapper", "src\zydis_wrapper\zydis_wrapper.vcxproj", "{3B2C1EE1-FDEC-4D85-BE46-3C6A5EA69883}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "loaddll", "src\loaddll\loaddll.vcxproj", "{21AD9735-967B-41F7-8329-DB88D03743ED}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "reverse_disasm_retaddr_finder", "src\reverse_disasm_retaddr_finder\reverse_disasm_retaddr_finder.vcxproj", "{8C6AE205-2FE0-4DA3-9A1A-0539A1DB51FB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E6548308-401E-3A8A-5819-905DB90522A6} = {E6548308-401E-3A8A-5819-905DB90522A6}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -78,6 +83,14 @@ Global
 		{21AD9735-967B-41F7-8329-DB88D03743ED}.Release|Win32.Build.0 = Release|Win32
 		{21AD9735-967B-41F7-8329-DB88D03743ED}.Release|x64.ActiveCfg = Release|x64
 		{21AD9735-967B-41F7-8329-DB88D03743ED}.Release|x64.Build.0 = Release|x64
+		{8C6AE205-2FE0-4DA3-9A1A-0539A1DB51FB}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8C6AE205-2FE0-4DA3-9A1A-0539A1DB51FB}.Debug|Win32.Build.0 = Debug|Win32
+		{8C6AE205-2FE0-4DA3-9A1A-0539A1DB51FB}.Debug|x64.ActiveCfg = Debug|x64
+		{8C6AE205-2FE0-4DA3-9A1A-0539A1DB51FB}.Debug|x64.Build.0 = Debug|x64
+		{8C6AE205-2FE0-4DA3-9A1A-0539A1DB51FB}.Release|Win32.ActiveCfg = Release|Win32
+		{8C6AE205-2FE0-4DA3-9A1A-0539A1DB51FB}.Release|Win32.Build.0 = Release|Win32
+		{8C6AE205-2FE0-4DA3-9A1A-0539A1DB51FB}.Release|x64.ActiveCfg = Release|x64
+		{8C6AE205-2FE0-4DA3-9A1A-0539A1DB51FB}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

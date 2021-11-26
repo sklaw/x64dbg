@@ -79,7 +79,7 @@ void fillbasicinfo(Zydis* cp, BASIC_INSTRUCTION_INFO* basicinfo, bool instrText)
     }
 }
 
-bool disasmfast(const unsigned char* data, duint addr, BASIC_INSTRUCTION_INFO* basicinfo)
+DLL_EXPORT bool disasmfast(const unsigned char* data, duint addr, BASIC_INSTRUCTION_INFO* basicinfo)
 {
     if(!data || !basicinfo)
         return false;

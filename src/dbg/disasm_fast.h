@@ -6,6 +6,6 @@
 
 void fillbasicinfo(Zydis* disasm, BASIC_INSTRUCTION_INFO* basicinfo, bool instrText = true);
 bool disasmfast(duint addr, BASIC_INSTRUCTION_INFO* basicinfo, bool cache = false);
-bool disasmfast(const unsigned char* data, duint addr, BASIC_INSTRUCTION_INFO* basicinfo);
+DLL_EXPORT bool disasmfast(const unsigned char* data, duint addr, BASIC_INSTRUCTION_INFO* basicinfo);
 
 #endif //_DISASM_FAST_H
