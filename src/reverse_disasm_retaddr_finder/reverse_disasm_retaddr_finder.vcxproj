@@ -73,10 +73,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(ProjectDir)..\zydis_wrapper;$(ProjectDir)..\zydis_wrapper\zydis\include;$(ProjectDir);$(ProjectDir)analysis;$(ProjectDir)commands;$(ProjectDir)..\dbg;$(IncludePath)</IncludePath>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(ProjectDir)..\zydis_wrapper;$(ProjectDir)..\zydis_wrapper\zydis\include;$(ProjectDir);$(ProjectDir)analysis;$(ProjectDir)commands;$(ProjectDir)..\dbg;$(IncludePath)</IncludePath>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
