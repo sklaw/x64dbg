@@ -4,10 +4,15 @@
 #include <set>
 #define FILEPATH_MAX 1000
 
-bool MockDbgMemRead(duint index, void* dest, duint size)
+struct ret_addr_id_stat
 {
-    return false;
-}
+    int picked_ret_addr_index_set_predretaddrcount;
+    int picked_ret_addr_index_set_size;
+    int picked_non_symbo_non_retaddr_index_set_predretaddrcount;
+    int picked_non_symbo_non_retaddr_index_set_size;
+    int picked_symbol_index_set_predretaddrcount;
+    int picked_symbol_index_set_size;
+};
 
 void read_txt_file_of_int_array_sep_by_space(const char* path, std::set<int> & s)
 {
@@ -86,7 +91,7 @@ bool is_retaddr(const char* memoy_bytes, int idx)
 }
 
 
-void process_dataset(const char* path)
+void process_dataset(const char* path, struct ret_addr_id_stat* ret_addr_id_stat_ptr)
 {
     char* memoy_bytes;
     int memoy_bytes_length;
@@ -99,10 +104,10 @@ void process_dataset(const char* path)
     char picked_ret_addr_index_set_file_path[FILEPATH_MAX];
     char picked_symbol_index_set_file_path[FILEPATH_MAX];
 
-    sprintf_s(memoy_bytes_file_path, "%s\\%s\\%s", path, "dataset_for_x64dbg", "memory_bytes");
-    sprintf_s(picked_non_symbo_non_retaddr_index_set_file_path, "%s\\%s\\%s", path, "dataset_for_x64dbg", "picked_non_symbo_non_retaddr_index_set");
-    sprintf_s(picked_ret_addr_index_set_file_path, "%s\\%s\\%s", path, "dataset_for_x64dbg", "picked_ret_addr_index_set");
-    sprintf_s(picked_symbol_index_set_file_path, "%s\\%s\\%s", path, "dataset_for_x64dbg", "picked_symbol_index_set");
+    sprintf_s(memoy_bytes_file_path, "%s\\%s\\%s", path, "meta_info", "memory_bytes");
+    sprintf_s(picked_non_symbo_non_retaddr_index_set_file_path, "%s\\%s\\%s", path, "meta_info\\validation_set", "picked_non_symbo_non_retaddr_index_set");
+    sprintf_s(picked_ret_addr_index_set_file_path, "%s\\%s\\%s", path, "meta_info\\validation_set", "picked_ret_addr_index_set");
+    sprintf_s(picked_symbol_index_set_file_path, "%s\\%s\\%s", path, "meta_info\\validation_set", "picked_symbol_index_set");
 
     printf("%s\n", memoy_bytes_file_path);
     printf("%s\n", picked_non_symbo_non_retaddr_index_set_file_path);
@@ -115,61 +120,91 @@ void process_dataset(const char* path)
     read_txt_file_of_int_array_sep_by_space(picked_symbol_index_set_file_path, picked_symbol_index_set);
 
     printf("memoy_bytes size = %d\n", memoy_bytes_length);
-    printf("picked_non_symbo_non_retaddr_index_set size = %d\n", picked_non_symbo_non_retaddr_index_set.size());
     printf("picked_ret_addr_index_set size = %d\n", picked_ret_addr_index_set.size());
     printf("picked_symbol_index_set size = %d\n", picked_symbol_index_set.size());
+    printf("picked_non_symbo_non_retaddr_index_set size = %d\n", picked_non_symbo_non_retaddr_index_set.size());
 
-    int picked_ret_addr_index_set_addrcount = 0;
+    int picked_ret_addr_index_set_predretaddrcount = 0;
     for(int idx : picked_ret_addr_index_set)
     {
         if(is_retaddr(memoy_bytes, idx))
         {
-            picked_ret_addr_index_set_addrcount++;
+            picked_ret_addr_index_set_predretaddrcount++;
         }
     }
 
-    int picked_non_symbo_non_retaddr_index_set_addrcount = 0;
+    int picked_non_symbo_non_retaddr_index_set_predretaddrcount = 0;
     for(int idx : picked_non_symbo_non_retaddr_index_set)
     {
         if(is_retaddr(memoy_bytes, idx))
         {
-            picked_non_symbo_non_retaddr_index_set_addrcount++;
+            picked_non_symbo_non_retaddr_index_set_predretaddrcount++;
         }
     }
 
 
-    int picked_symbol_index_set_addrcount = 0;
+    int picked_symbol_index_set_predretaddrcount = 0;
     for(int idx : picked_symbol_index_set)
     {
         if(is_retaddr(memoy_bytes, idx))
         {
-            picked_symbol_index_set_addrcount++;
+            picked_symbol_index_set_predretaddrcount++;
         }
     }
 
 
-    printf("picked_ret_addr_index_set_addrcount = %d/%d\n", picked_ret_addr_index_set_addrcount, picked_ret_addr_index_set.size());
-    printf("picked_non_symbo_non_retaddr_index_set_addrcount = %d/%d\n", picked_non_symbo_non_retaddr_index_set_addrcount, picked_non_symbo_non_retaddr_index_set.size());
-    printf("picked_symbol_index_set_addrcount = %d/%d\n", picked_symbol_index_set_addrcount, picked_symbol_index_set.size());
+    printf("picked_ret_addr_index_set_predretaddrcount = %d/%d\n", picked_ret_addr_index_set_predretaddrcount, picked_ret_addr_index_set.size());
+    printf("picked_non_symbo_non_retaddr_index_set_predretaddrcount = %d/%d\n", picked_non_symbo_non_retaddr_index_set_predretaddrcount, picked_non_symbo_non_retaddr_index_set.size());
+    printf("picked_symbol_index_set_predretaddrcount = %d/%d\n", picked_symbol_index_set_predretaddrcount, picked_symbol_index_set.size());
+
+    ret_addr_id_stat_ptr->picked_ret_addr_index_set_predretaddrcount   +=  picked_ret_addr_index_set_predretaddrcount;
+    ret_addr_id_stat_ptr->picked_ret_addr_index_set_size        +=  picked_ret_addr_index_set.size();
+    ret_addr_id_stat_ptr->picked_non_symbo_non_retaddr_index_set_predretaddrcount  +=  picked_non_symbo_non_retaddr_index_set_predretaddrcount;
+    ret_addr_id_stat_ptr->picked_non_symbo_non_retaddr_index_set_size       +=  picked_non_symbo_non_retaddr_index_set.size();
+    ret_addr_id_stat_ptr->picked_symbol_index_set_predretaddrcount     +=  picked_symbol_index_set_predretaddrcount;
+    ret_addr_id_stat_ptr->picked_symbol_index_set_size          +=  picked_symbol_index_set.size();
 }
 
 int main()
 {
     const char* datasets[] =
     {
-        "C:\\Users\\test\\PycharmProjects\\828w_course_project\\828w_project_dataset\\real\\16_1234_mscorjit.dll_1000",
-        "C:\\Users\\test\\PycharmProjects\\828w_course_project\\828w_project_dataset\\real\\16_1234_user32.dll_1000",
-        "C:\\Users\\test\\PycharmProjects\\828w_course_project\\828w_project_dataset\\real\\16_1234_vbe7.dll_1000"
+        "G:\\My Drive\\828w_project_dataset\\real\\16_1234_kernel32.dll_1250",
+        "G:\\My Drive\\828w_project_dataset\\real\\16_1234_mscoree.dll_1250",
+        "G:\\My Drive\\828w_project_dataset\\real\\16_1234_ntdll.dll_1250"
     };
 
+    struct ret_addr_id_stat s;
+    memset(&s, 0, sizeof(s));
 
     int num_datasets = sizeof(datasets) / sizeof(datasets[0]);
     printf("%d datasets to process:\n", num_datasets);
     for(int i = 0; i < num_datasets; i++)
     {
         printf("%s\n", datasets[i]);
-        process_dataset(datasets[i]);
+        process_dataset(datasets[i], &s);
     }
+
+    int not_ret_addr_total = s.picked_non_symbo_non_retaddr_index_set_size + s.picked_symbol_index_set_size;
+    int not_ret_addr_false_negative = s.picked_non_symbo_non_retaddr_index_set_predretaddrcount + s.picked_symbol_index_set_predretaddrcount;
+    int not_ret_addr_true_positive = not_ret_addr_total - not_ret_addr_false_negative;
+
+    int ret_addr_total = s.picked_ret_addr_index_set_size;
+    int ret_addr_true_positive = s.picked_ret_addr_index_set_predretaddrcount;
+    int ret_addr_false_negative = ret_addr_total - ret_addr_true_positive;
+
+    printf("%5d/%5d\t%5d/%5d\n",
+           not_ret_addr_true_positive,
+           not_ret_addr_total,
+           ret_addr_false_negative,
+           ret_addr_total
+          );
+    printf("%5d/%5d\t%5d/%5d\n",
+           not_ret_addr_false_negative,
+           not_ret_addr_total,
+           ret_addr_true_positive,
+           ret_addr_total
+          );
 
     return 0;
 
