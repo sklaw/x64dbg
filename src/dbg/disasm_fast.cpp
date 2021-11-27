@@ -85,8 +85,8 @@ DLL_EXPORT bool disasmfast(const unsigned char* data, duint addr, BASIC_INSTRUCT
         return false;
     Zydis cp;
     cp.Disassemble(addr, data, MAX_DISASM_BUFFER);
-    if(trydisasmfast(data, addr, basicinfo, cp.Success() ? cp.Size() : 1))
-        return true;
+    // if(trydisasmfast(data, addr, basicinfo, cp.Success() ? cp.Size() : 1))
+    //    return true;
     if(!cp.Success())
     {
         strcpy_s(basicinfo->instruction, "???");

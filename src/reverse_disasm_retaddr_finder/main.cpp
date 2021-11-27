@@ -2,7 +2,7 @@
 #include "disasm_helper.h"
 #include "disasm_fast.h"
 #include <set>
-#define FILEPATH_MAX 10000
+#define FILEPATH_MAX 1000
 
 bool MockDbgMemRead(duint index, void* dest, duint size)
 {
@@ -47,6 +47,45 @@ void read_binary_file_into_char_array(const char* path, char** buffer_ptr, int* 
 
 }
 
+
+bool is_retaddr(const char* memoy_bytes, int idx)
+{
+    unsigned char disasmData[256];
+
+    duint base_va = 0;
+    duint offset = idx;
+    duint va = base_va + offset;
+
+
+    duint base = base_va;
+    duint data = va; // data in stack that is possibly a return address
+    duint readStart = data - 16 * 4;
+    if(readStart < base)
+        readStart = base;
+
+    // Mock: bool succeed = DbgMemRead(readStart, disasmData, sizeof(disasmData));
+    for(int i = 0; i < sizeof(disasmData); i++)
+    {
+        disasmData[i] = memoy_bytes[readStart + i];
+    }
+
+
+    duint prev = disasmback(disasmData, 0, sizeof(disasmData), data - readStart, 1);
+    duint previousInstr = readStart + prev;
+
+    BASIC_INSTRUCTION_INFO basicinfo;
+    bool valid = disasmfast(disasmData + prev, previousInstr, &basicinfo);
+    if(valid && basicinfo.call)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+
 void process_dataset(const char* path)
 {
     char* memoy_bytes;
@@ -79,6 +118,39 @@ void process_dataset(const char* path)
     printf("picked_non_symbo_non_retaddr_index_set size = %d\n", picked_non_symbo_non_retaddr_index_set.size());
     printf("picked_ret_addr_index_set size = %d\n", picked_ret_addr_index_set.size());
     printf("picked_symbol_index_set size = %d\n", picked_symbol_index_set.size());
+
+    int picked_ret_addr_index_set_addrcount = 0;
+    for(int idx : picked_ret_addr_index_set)
+    {
+        if(is_retaddr(memoy_bytes, idx))
+        {
+            picked_ret_addr_index_set_addrcount++;
+        }
+    }
+
+    int picked_non_symbo_non_retaddr_index_set_addrcount = 0;
+    for(int idx : picked_non_symbo_non_retaddr_index_set)
+    {
+        if(is_retaddr(memoy_bytes, idx))
+        {
+            picked_non_symbo_non_retaddr_index_set_addrcount++;
+        }
+    }
+
+
+    int picked_symbol_index_set_addrcount = 0;
+    for(int idx : picked_symbol_index_set)
+    {
+        if(is_retaddr(memoy_bytes, idx))
+        {
+            picked_symbol_index_set_addrcount++;
+        }
+    }
+
+
+    printf("picked_ret_addr_index_set_addrcount = %d/%d\n", picked_ret_addr_index_set_addrcount, picked_ret_addr_index_set.size());
+    printf("picked_non_symbo_non_retaddr_index_set_addrcount = %d/%d\n", picked_non_symbo_non_retaddr_index_set_addrcount, picked_non_symbo_non_retaddr_index_set.size());
+    printf("picked_symbol_index_set_addrcount = %d/%d\n", picked_symbol_index_set_addrcount, picked_symbol_index_set.size());
 }
 
 int main()
@@ -101,29 +173,5 @@ int main()
 
     return 0;
 
-    unsigned char disasmData[256];
 
-    duint base_va = 123;
-    duint offset = 345;
-
-    duint va = base_va + offset;
-
-
-    duint base = base_va;
-    duint data = va;
-    duint readStart = data - 16 * 4;
-    if(readStart < base)
-        readStart = base;
-
-    bool succeed = MockDbgMemRead(readStart, disasmData, sizeof(disasmData));
-
-    duint prev = disasmback(disasmData, 0, sizeof(disasmData), data - readStart, 1);
-    duint previousInstr = readStart + prev;
-
-    BASIC_INSTRUCTION_INFO basicinfo;
-    bool valid = disasmfast(disasmData + prev, previousInstr, &basicinfo);
-    if(valid && basicinfo.call)
-    {
-
-    }
 }
